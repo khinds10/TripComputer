@@ -1,4 +1,4 @@
-# TripComputer - GPS Trip Computer & Weather Module for you vehicle
+# TripComputer - GPS Trip Computer & Weather Module for your vehicle
 
 #### Flashing RaspberriPi Hard Disk / Install Required Software (Using Ubuntu Linux)
 
@@ -135,7 +135,7 @@ RaspberriPi Zero
 
 Adafruit GPS Breakout
 
-![Adafruit GPS Breakout](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/GPS.jpg "Adafruit GPS Breakout")
+![Adafruit GPS Breakout](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/GPS.png "Adafruit GPS Breakout")
 
 
 ### Print the Enclosure
