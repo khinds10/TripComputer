@@ -46,7 +46,7 @@ const unsigned char fonts[] = {6, 10, 18, 51, 120, 123};
 char *fileName = "/dev/i2c-1";
 
 // address of I2C device Digole
-int  address = 0x27;
+int  address = 0x1c;
 
 void delay (unsigned int howLong){
   struct timespec sleeper, dummy ;
@@ -527,7 +527,6 @@ int main (int argc, char* argv[]) {
     } else if (strcmp(digoleCommand, "ChangeI2CAddress") == 0) {
         changeI2CAddress((uint8_t)atoi(argv[2]));
     }
-    
     printf("\n");
 	return 0;
 }
