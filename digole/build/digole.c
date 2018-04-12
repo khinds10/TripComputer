@@ -525,7 +525,7 @@ int main (int argc, char* argv[]) {
     } else if (strcmp(digoleCommand, "LCDdrawbitmap") == 0) {
         //LCDdrawbitmap((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), (uint8_t)atoi(argv[4]), (uint8_t)atoi(argv[5]), (uint8_t)atoi(argv[6]),(uint8_t)atoi(argv[7]),(uint8_t)argv[8]);
     } else if (strcmp(digoleCommand, "ChangeI2CAddress") == 0) {
-        changeI2CAddress((uint8_t)atoi(argv[2]))
+        changeI2CAddress((uint8_t)atoi(argv[2]));
     }
     
     printf("\n");
