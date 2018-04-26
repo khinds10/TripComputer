@@ -536,19 +536,19 @@ int main (int argc, char* argv[]) {
     } else if (strcmp(digoleCommand, "ChangeI2CAddress") == 0) {
         changeI2CAddress((uint8_t)atoi(argv[2]));
     } else if (strcmp(digoleCommand, "Driving") == 0) {
-        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 30, 30, &Driving,0);
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Driving,0);
     } else if (strcmp(digoleCommand, "Calendar") == 0) {
-        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 30, 30, &Calendar,0);
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Calendar,0);
     } else if (strcmp(digoleCommand, "Compass") == 0) {
-        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 30, 30, &Compass,0);
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Compass,0);
     } else if (strcmp(digoleCommand, "GPS") == 0) {
-        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 30, 30, &GPS,0);
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &GPS,0);
     } else if (strcmp(digoleCommand, "Speed") == 0) {
-        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 30, 30, &Speed,0);
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Speed,0);
     } else if (strcmp(digoleCommand, "Traffic") == 0) {
-        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 30, 30, &Traffic,0);
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Traffic,0);
     } else if (strcmp(digoleCommand, "Temp") == 0) {
-        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 30, 30, &Temp,0);
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Temp,0);
     }
     
     printf("\n");
