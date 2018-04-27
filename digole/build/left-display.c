@@ -33,6 +33,8 @@
 #include "Speed.h"
 #include "Traffic.h"
 #include "Temp.h"
+#include "NoWifi.h"
+#include "Wifi.h"
 
 #define _TEXT_ 0
 #define _GRAPH_ 1
@@ -549,6 +551,10 @@ int main (int argc, char* argv[]) {
         drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Traffic,0);
     } else if (strcmp(digoleCommand, "Temp") == 0) {
         drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Temp,0);
+    } else if (strcmp(digoleCommand, "NoWifi") == 0) {
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &NoWifi,0);
+    } else if (strcmp(digoleCommand, "Wifi") == 0) {
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Wifi,0);
     }
     
     printf("\n");
