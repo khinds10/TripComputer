@@ -4,7 +4,11 @@
 # License: GPL 2.0
 from socket import AF_INET, SOCK_DGRAM
 import datetime as dt
-import sys, socket, struct, time, urllib2, time, json, string, cgi, subprocess, json, re
+import cgi, json, re, socket, string, struct, subprocess, sys, time, urllib2
+import includes.data as data
+import info.CurrentReadings as CurrentReadings
+import info.WeatherDetails as WeatherDetails
+import info.GPSInfo as GPSInfo
 
 # setup the commands to drive the left and right screens
 leftDisplayCommand = "/home/pi/TripComputer/computer/left-display"
@@ -213,3 +217,219 @@ while True:
 #./left-display drawLine 75 60 75 25
 #./left-display setColor 255
 #./left-display drawLine 75 60 75 95
+
+
+## weather.data
+#weatherNextHour = ''
+#weatherOutside = ''
+
+## temp.data
+#tempHmidty = ''
+
+## location.data  (use equation)
+#locationTrack = ''
+#currentTime = ''
+
+## stats.data (get the first of each)
+#statsDrivingTimes = ''
+#statsInTrafficTimes = ''
+#statsAverageSpeeds = ''
+#statsMilesTravelled = ''
+
+## current time
+#timeNow = ''
+
+## reset screen and load beginning driving statistics using the configured digole driver
+#digoleDriveLocation = "/home/pi/TripComputer/computer/digole"
+#resetScreen()
+
+#########################
+## default screen
+#########################
+
+## begin loop through main default screen
+#while True:
+#    try:
+#        # weather.data
+#        weatherInfo = data.getJSONFromDataFile('weather.data')
+#        if weatherInfo == "":
+#            weatherInfo = WeatherDetails.WeatherDetails()
+#            weatherInfo = json.loads(weatherInfo.to_JSON())
+
+#        # next hour weather
+#        if weatherNextHour != weatherInfo['nextHour']:
+#            printByFontColorPosition("51", "255", "5", "75", weatherInfo['nextHour'][:25], weatherNextHour)
+#            weatherNextHour = weatherInfo['nextHour']
+
+#        # outside temp/humidity
+#        weatherOutsideUpdated = '[' + str(int(weatherInfo['apparentTemperature'])) + '*F ' + str(int(weatherInfo['humidity']*100)) + '%]'
+#        if weatherOutside != weatherOutsideUpdated:
+#            printByFontColorPosition("120", "240", "150", "35", weatherOutsideUpdated, weatherOutside)
+#            weatherOutside = weatherOutsideUpdated
+#        
+#        # temp.data
+#        tempInfo = data.getJSONFromDataFile('temp.data')
+#        if tempInfo == "":
+#            tempInfo = CurrentReadings.CurrentReadings()
+#            tempInfo = json.loads(tempInfo.to_JSON())
+#        
+#        # inside temp / humidity
+#        tempHmidtyUpdated =  str(tempInfo['temp']) + "*F " + str(tempInfo['hmidty']) + "%"
+#        if tempHmidty != tempHmidtyUpdated:
+#            printByFontColorPosition("120", "249", "5", "35", tempHmidtyUpdated, tempHmidty)        
+#            tempHmidty = tempHmidtyUpdated
+
+#        # stats.data
+#        drivingStatistics = data.getJSONFromDataFile('stats.data')
+#        if drivingStatistics == "":
+#            drivingStatistics = DrivingStatistics.DrivingStatistics()
+#            drivingStatistics = json.loads(tempInfo.to_JSON())
+#        
+#        # current driving time
+#        statsDrivingTimesUpdated = str(drivingStatistics['drivingTimes'][0])
+#        if statsDrivingTimes != statsDrivingTimesUpdated:
+#            printByFontColorPosition("120", "28", "5", "125", statsDrivingTimesUpdated, statsDrivingTimes)
+#            statsDrivingTimes = statsDrivingTimesUpdated
+#            
+#        # current in-traffic time
+#        statsInTrafficTimesUpdated = str(drivingStatistics['inTrafficTimes'][0]) + ' [Traffic]'
+#        if statsInTrafficTimes != statsInTrafficTimesUpdated:
+#            printByFontColorPosition("120", "252", "120", "125", statsInTrafficTimesUpdated, statsInTrafficTimes)
+#            statsInTrafficTimes = statsInTrafficTimesUpdated
+#        
+#        # average speed
+#        statsAverageSpeedsUpdated = str(drivingStatistics['averageSpeeds'][0]) + 'mph [Avg]'
+#        if statsAverageSpeeds != statsAverageSpeedsUpdated:
+#            printByFontColorPosition("120", "250", "5", "175", statsAverageSpeedsUpdated, statsAverageSpeeds)
+#            statsAverageSpeeds = statsAverageSpeedsUpdated
+
+#        # miles travelled
+#        statsMilesTravelledUpdated = str(drivingStatistics['milesTravelled'][0]) + ' mi Est.'
+#        if statsMilesTravelled != statsMilesTravelledUpdated:
+#            printByFontColorPosition("120", "222", "190", "175", statsMilesTravelledUpdated[:10], statsMilesTravelled)
+#            statsMilesTravelled = statsMilesTravelledUpdated
+#        
+#        # location.data
+#        locationInfo = data.getJSONFromDataFile('location.data')
+#        if locationInfo == "":
+#            locationInfo = GPSInfo.GPSInfo()
+#            locationInfo = json.loads(locationInfo.to_JSON())
+
+#        # TODO, have a is the GPS fixed yet since reboot to then show the time because we have it then
+#        gpsFix = 'no'
+#        
+#        gpsFix = 'yes'
+#        if gpsFix == "ok":
+#            timeUpdated = " - " + dt.datetime.now().time().strftime('%I:%M%p').lstrip('0') + " - "
+#        else:
+#            timeUpdated = "             "
+#            
+#        if timeNow != timeUpdated:
+#            printByFontColorPosition("120", "249", "150", "225", timeUpdated, timeNow)
+#            timeNow = timeUpdated
+
+#    except:
+#        pass
+#    time.sleep(1)
+
+
+
+
+##!/usr/bin/python
+## Show on/off indicator lights for if internet connected and if GPS location found
+## Kevin Hinds http://www.kevinhinds.com
+## License: GPL 2.0
+#import time, subprocess, urllib2
+#import RPi.GPIO as GPIO
+#import includes.data as data
+
+## to use Raspberry Pi board pin numbers  
+#GPIO.setmode(GPIO.BOARD)
+# 
+## set up GPIO output channel
+#GPIO.setup(13, GPIO.OUT)
+#GPIO.output(13,GPIO.LOW)
+#GPIO.setup(15, GPIO.OUT)
+#GPIO.output(15,GPIO.LOW)
+#GPIO.setup(16, GPIO.OUT)
+#GPIO.output(16,GPIO.LOW)
+
+#def setLight(pin, isLit):
+#    """ set light to on or off based on boolean value """
+#    if isLit:
+#        GPIO.output(pin,GPIO.HIGH)
+#    else:
+#        GPIO.output(pin,GPIO.LOW)
+
+#def checkInternetOn():
+#    """ set internet connected light by ability to connect to google or not """
+#    try:
+#        urllib2.urlopen('http://www.kevinhinds.net', timeout=1)
+#        setLight(13, 1)
+#    except urllib2.URLError as err: 
+#        setLight(13, 0)
+
+## turn on and off indicator lights based on GPS and Internet connectivity
+#while True:
+#    try:
+
+#        # check internet connection
+#        checkInternetOn()
+
+#        # check GPS status and turn on light if no issues
+#        currentLocationInfo = data.getCurrentLatLong()
+#        setLight(15, 1)
+#        
+#    except (Exception):
+#        # GPS issue, turn off light
+#        setLight(15, 0)
+#    
+#    time.sleep(1)
+
+
+##!/usr/bin/python
+## Show current travel direction as compass reading to ssd1306 display
+## @author khinds
+## @license http://opensource.org/licenses/gpl-license.php GNU Public License
+#from math import cos, sin, pi, radians
+#from oled.device import ssd1306, sh1106
+#from oled.render import canvas
+#from PIL import ImageFont
+#import time
+#import includes.data as data
+# 
+## define fonts
+#font = ImageFont.load_default()
+#titleFont = ImageFont.truetype('/home/pi/TripComputer/computer/fonts/DroidSansMono.ttf', 20)
+#bodyFont = ImageFont.truetype('/home/pi/TripComputer/computer/fonts/TheNextFont.ttf', 24)
+
+## device and screen settings
+#device = ssd1306()
+#currentDirection = 0
+#while True:
+#    try:
+#        with canvas(device) as draw:
+#        
+#            # location.data
+#            locationInfo = data.getJSONFromDataFile('location.data')
+#            if locationInfo != "":
+#                # calculate line angle from GPS degrees convert to radians, but only if we're moving more than 5mph
+#                if (int(locationInfo['speed']) > 5):
+#                    currentDirection = locationInfo['track']
+#                draw.text((70, 2), str(int(currentDirection)) + "*", font=titleFont, fill=255)
+#                draw.text((70, 40), str(data.getHeadingByDegrees(currentDirection)), font=bodyFont, fill=255)
+#                draw.ellipse((2, 2 , 60, 60), outline=255, fill=0)       
+#                r = radians(currentDirection)
+#                radius = 30
+#                px = round(32 + radius * sin(r))
+#                py = round(32 - radius * cos(r))
+#                draw.line((32, 32, px, py), fill=255)
+#            else:
+#                draw.text((10, 5), str('GPS'), font=titleFont, fill=255)
+#                draw.text((10, 30), str('Searching'), font=titleFont, fill=255)
+#    except:
+#        with canvas(device) as draw:
+#            draw.text((10, 5), str('GPS'), font=titleFont, fill=255)
+#            draw.text((10, 30), str('Searching'), font=titleFont, fill=255)
+#    time.sleep(1)
+
