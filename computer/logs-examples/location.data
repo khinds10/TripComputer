@@ -1,0 +1,9 @@
+{
+    "altitude": NaN, 
+    "climb": NaN, 
+    "latitude": NaN, 
+    "longitude": NaN, 
+    "mode": 0, 
+    "speed": NaN, 
+    "track": NaN
+}

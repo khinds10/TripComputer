@@ -1,0 +1,11 @@
+{
+    "apparentTemperature": 26.08, 
+    "humidity": 0.46, 
+    "icon": "clear-day", 
+    "nextHour": "Clear for the hour.", 
+    "precipIntensity": 0.0, 
+    "precipProbability": 0.0, 
+    "summary": "Clear", 
+    "time": 1486396687, 
+    "windSpeed": 9.94
+}
