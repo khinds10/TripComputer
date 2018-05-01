@@ -138,7 +138,7 @@ def updateTimeDriving():
     uptime = re.sub(" minutes",'m',uptime)
     uptime = re.sub(" minute",'m',uptime)
     uptime = re.sub(" hours",'h',uptime)
-    uptime = re.sub(" hour",'m',uptime)
+    uptime = re.sub(" hour",'h',uptime)
     uptime = re.sub(", ",'',uptime)
     updateDrivingTime(uptime)
     
@@ -211,6 +211,8 @@ while True:
         outsideTemp = str(int(weatherInfo['apparentTemperature'])) + "f"
         if int(weatherInfo['apparentTemperature']) == 0:
             outsideTemp = "     "
+        else:
+            outsideTemp = "(" + outsideTemp + ")"
         updateTemps(insideTemp,outsideTemp)
 
         # get current direction heading
@@ -232,12 +234,9 @@ while True:
 
         # average speed
         updateAvgMPH(str(drivingStatistics['averageSpeeds'][0]) + 'mph')
-        if statsAverageSpeeds != statsAverageSpeedsUpdated:
-            printByFontColorPosition("120", "250", "5", "175", statsAverageSpeedsUpdated, statsAverageSpeeds)
-            statsAverageSpeeds = statsAverageSpeedsUpdated
         
         # current driving time / miles travelled
-        updateDrivingTime(str(drivingStatistics['drivingTimes'][0]) + ' - ' str(drivingStatistics['milesTravelled'][0]) + 'mi')
+        updateDrivingTime(str(drivingStatistics['drivingTimes'][0]) + ' - ' + str(drivingStatistics['milesTravelled'][0]) + 'mi')
         
     secondsPassed = secondsPassed + 1
     time.sleep(1)
