@@ -1,21 +1,21 @@
 {
     "averageAltitude": [
         "7", 
+        "7",
         "7", 
-        "78", 
-        "78"
+        "7"
     ], 
     "averageSpeeds": [
         "6", 
         "11", 
         "22", 
         "28"
-    ], 
+    ],
     "drivingTimes": [
-        "47m", 
-        "1m", 
-        "1h44m", 
-        "1h44m"
+        "", 
+        "", 
+        "", 
+        ""
     ], 
     "inTrafficTimes": [
         "1m", 
