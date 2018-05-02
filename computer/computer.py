@@ -4,6 +4,7 @@
 # License: GPL 2.0
 from socket import AF_INET, SOCK_DGRAM
 import datetime as dt
+from math import cos, sin, pi, radians
 import cgi, json, re, socket, string, struct, subprocess, sys, time, urllib2
 import includes.data as data
 import info.CurrentReadings as CurrentReadings
@@ -24,7 +25,8 @@ def getNTPTime(host = "pool.ntp.org"):
     TIME1970 = 2208988800L # 1970-01-01 00:00:00
 
     # connect to server
-    client = socket.socket( AF_INET, SOCK_DGRAM)
+    client = socket.socket(AF_INET, SOCK_DGRAM)
+    client.settimeout(2)
     client.sendto(msg, address)
     msg, address = client.recvfrom( buf )
 
@@ -131,7 +133,7 @@ def updateTimeOfDay(currentTimeNew):
     subprocess.call([leftDisplayCommand, "printxy_abs", "5", "120", currentTimeNew])
     currentTimeAmount = currentTimeNew
 
-def updateTimeDriving():
+def getTimeDriving():
     ''' update time driving from uptime command'''
     uptime = subprocess.check_output(['uptime', '-p'])
     uptime = re.sub("up ",'',uptime)
@@ -140,8 +142,43 @@ def updateTimeDriving():
     uptime = re.sub(" hours",'h',uptime)
     uptime = re.sub(" hour",'h',uptime)
     uptime = re.sub(", ",'',uptime)
-    updateDrivingTime(uptime)
+    return uptime.rstrip()
     
+def percentage(part, whole):
+    '''get percent as a float'''
+    return 100 * float(part)/float(whole)
+        
+def timeStringToMinutes(timeString):
+    '''break down the string such as "2h4m" to just minutes as integer'''
+
+    # extract minutes
+    try:
+        timeStringMinutes = re.findall("[0-9]+m", timeString)
+        if timeStringMinutes[0]:
+            timeStringMinutes[0] = re.sub("m",'',timeStringMinutes[0])
+            timeStringMinutes = int(timeStringMinutes[0])
+    except:
+        timeStringMinutes = 0
+
+    # extract hours
+    try:
+        timeStringHours = re.findall("[0-9]+h", timeString)
+        if timeStringHours[0]:
+            timeStringHours[0] = re.sub("h",'',timeStringHours[0])
+            timeStringHours = int(timeStringHours[0])
+    except:
+        timeStringHours = 0
+    
+    # get the total minutes and return    
+    return (int(timeStringHours) * 60) + int(timeStringMinutes)
+
+def calculateInTrafficPercent(inTrafficTimeAmount, drivingTimeAmount):
+    '''for given in traffic time and total driving time get the percent time in traffic as int'''
+    inTrafficTotalMinutes = timeStringToMinutes(inTrafficTimeAmount)    
+    drivingTotalMinutes = timeStringToMinutes(drivingTimeAmount)
+    percent = int(percentage(inTrafficTotalMinutes, drivingTotalMinutes))
+    return str(percent)
+
 def toggleWifiIcon():
     ''' toggle wifi icon based on if we have a valid ping from google or not '''
     try:
@@ -177,17 +214,18 @@ def checkTimeCorrect():
 setupRightScreen()
 setupLeftScreen()
 secondsPassed = 0
+timeIsCorrect = False
 while True:
 
-    # check time against GPS @TODO
-
+    # each 10 seconds loop
     if (secondsPassed % 10 == 0):
-        updateTimeDriving()
         toggleWifiIcon()
         
         # check time against internet
-        timeSet = checkTimeCorrect()
-        if timeSet:
+        if timeIsCorrect == False:
+            timeIsCorrect = checkTimeCorrect()
+        
+        if timeIsCorrect:
             updateTimeOfDay(dt.datetime.now().strftime('%I:%M%p %m/%d'))
         else:
             updateTimeOfDay('')
@@ -214,17 +252,6 @@ while True:
         else:
             outsideTemp = "(" + outsideTemp + ")"
         updateTemps(insideTemp,outsideTemp)
-
-        # get current direction heading
-        locationInfo = data.getJSONFromDataFile('location.data')
-
-        # calculate line angle from GPS degrees convert to radians, but only if we're actually moving more than 5mph
-        if locationInfo != "":    
-            if (int(locationInfo['speed']) > 5):
-                currentDirection = locationInfo['track']
-                updateDirection(str(data.getHeadingByDegrees(currentDirection)))
-        else: 
-            updateDirection("    ")
         
         # get current driving stats
         drivingStatistics = data.getJSONFromDataFile('stats.data')
@@ -236,7 +263,57 @@ while True:
         updateAvgMPH(str(drivingStatistics['averageSpeeds'][0]) + 'mph')
         
         # current driving time / miles travelled
-        updateDrivingTime(str(drivingStatistics['drivingTimes'][0]) + ' - ' + str(drivingStatistics['milesTravelled'][0]) + 'mi')
+        uptime = getTimeDriving()
+        updateDrivingTime(str(uptime) + ' - ' + str(drivingStatistics['milesTravelled'][0]) + 'mi')
+        updateDailyDrivingTime(str(drivingStatistics['drivingTimes'][1]) + ' - ' + str(drivingStatistics['milesTravelled'][1]) + 'mi')
+        
+        # current in-traffic time
+        currentInTraffic = str(drivingStatistics['inTrafficTimes'][0])
+        updatePercentTraffic(calculateInTrafficPercent(str(currentInTraffic), str(uptime)) + '%')
+        
+    # each 2 seconds loop
+    if (secondsPassed % 2 == 0):
+
+        # get current direction heading
+        locationInfo = data.getJSONFromDataFile('location.data')
+
+        # calculate line angle from GPS degrees convert to radians, but only if we're actually moving more than 5mph
+        if locationInfo != "":
+            if (int(locationInfo['speed']) > 5):
+                currentDirection = locationInfo['track']
+                updateDirection(str(data.getHeadingByDegrees(currentDirection)))
+        else:
+            updateDirection("    ")
+                
+        
+        r = radians(currentDirection)
+        
+        radius = 38
+        px = round(38 + radius * sin(r))
+        py = round(38 - radius * cos(r))
+        
+        
+        subprocess.call([leftDisplayCommand, "setColor","224"])
+        subprocess.call([leftDisplayCommand, "drawLine", "38", "38", str(px), str(py)])
+        
+        
+        
+        
+        
+        
+        #draw.line((32, 32, px, py), fill=255)
+        
+        #./left-display setColor 224
+        #./left-display drawLine 75 60 75 25
+        #./left-display setColor 255
+        #./left-display drawLine 75 60 75 95
+
+
+
+
+
+
+        
         
     secondsPassed = secondsPassed + 1
     time.sleep(1)
