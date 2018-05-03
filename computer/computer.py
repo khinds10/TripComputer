@@ -189,26 +189,43 @@ def toggleWifiIcon():
     
 def checkTimeCorrect():
     ''' check if indeed the local time on the RPi is set according to internet time '''
-    timeIsSet = True
-    internetTime = getNTPTime().split()
-    localTime = subprocess.check_output(['date']).split()
 
-    # check date is correct
-    internetTimeSet = internetTime[3].split(':')
-    localTimeSet = localTime[3].split(':')
-    if internetTime[0] != localTime[0]:
-        timeIsSet = False
-    if internetTime[2] != localTime[1]:
-        timeIsSet = False
-        
-    # check clock is correct
-    internetTimeSet = internetTime[3].split(':')
-    localTimeSet = localTime[3].split(':')
-    if internetTimeSet[0] != localTimeSet[0]:
-        timeIsSet = False
-    if internetTimeSet[1] != localTimeSet[1]:
+    try: 
+        timeIsSet = True
+        internetTime = getNTPTime().split()
+        localTime = subprocess.check_output(['date']).split()
+
+        # check date is correct
+        internetTimeSet = internetTime[3].split(':')
+        localTimeSet = localTime[3].split(':')
+        if internetTime[0] != localTime[0]:
+            timeIsSet = False
+        if internetTime[2] != localTime[1]:
+            timeIsSet = False
+            
+        # check clock is correct
+        internetTimeSet = internetTime[3].split(':')
+        localTimeSet = localTime[3].split(':')
+        if internetTimeSet[0] != localTimeSet[0]:
+            timeIsSet = False
+        if internetTimeSet[1] != localTimeSet[1]:
+            timeIsSet = False
+    except:
         timeIsSet = False
     return timeIsSet
+
+def setCompass(x,y, color):
+    ''' for x,y direction coordinates and color draw the compass with needle '''
+    subprocess.call([leftDisplayCommand, "setColor","255"])
+    subprocess.call([leftDisplayCommand, "drawCircle","75","60","38","0"])
+    subprocess.call([leftDisplayCommand, "drawCircle","75","60","37","0"])
+    subprocess.call([leftDisplayCommand, "drawCircle","75","60","36","0"])
+    subprocess.call([leftDisplayCommand, "setColor",color])
+    subprocess.call([leftDisplayCommand, "drawLine", "77", "62", str(px), str(py)])
+    subprocess.call([leftDisplayCommand, "drawLine", "76", "61", str(px), str(py)])        
+    subprocess.call([leftDisplayCommand, "drawLine", "75", "60", str(px), str(py)])
+    subprocess.call([leftDisplayCommand, "drawLine", "74", "59", str(px), str(py)])
+    subprocess.call([leftDisplayCommand, "drawLine", "73", "58", str(px), str(py)])
 
 # begin computer
 setupRightScreen()
@@ -285,29 +302,25 @@ while True:
         else:
             updateDirection("    ")
                 
-        
-        r = radians(currentDirection)
-        
-        radius = 38
-        px = round(38 + radius * sin(r))
-        py = round(38 - radius * cos(r))
-        
-        
-        subprocess.call([leftDisplayCommand, "setColor","224"])
-        subprocess.call([leftDisplayCommand, "drawLine", "38", "38", str(px), str(py)])
-        
-        
-        
-        
-        
-        
-        #draw.line((32, 32, px, py), fill=255)
-        
-        #./left-display setColor 224
-        #./left-display drawLine 75 60 75 25
-        #./left-display setColor 255
-        #./left-display drawLine 75 60 75 95
+                
 
+        
+        # radians based on where true north is
+        r = radians(360 - currentDirection)        
+        radius = 38
+
+        px = round(75 - radius * sin(r))
+        py = round(60 + radius * cos(r))
+        
+        setCompass(px,py, "0")
+        setCompass(px,py, "255")
+        
+        px = round(75 + radius * sin(r))
+        py = round(60 - radius * cos(r))
+        setCompass(px,py, "0")
+        setCompass(px,py, "224")
+
+    
 
 
 
