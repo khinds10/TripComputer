@@ -216,22 +216,28 @@ def checkTimeCorrect():
 
 def setCompass(x,y, color):
     ''' for x,y direction coordinates and color draw the compass with needle '''
-    subprocess.call([leftDisplayCommand, "setColor","255"])
+    subprocess.call([leftDisplayCommand, "setColor", "255"])
     subprocess.call([leftDisplayCommand, "drawCircle","75","60","38","0"])
     subprocess.call([leftDisplayCommand, "drawCircle","75","60","37","0"])
     subprocess.call([leftDisplayCommand, "drawCircle","75","60","36","0"])
-    subprocess.call([leftDisplayCommand, "setColor",color])
-    subprocess.call([leftDisplayCommand, "drawLine", "77", "62", str(px), str(py)])
-    subprocess.call([leftDisplayCommand, "drawLine", "76", "61", str(px), str(py)])        
-    subprocess.call([leftDisplayCommand, "drawLine", "75", "60", str(px), str(py)])
-    subprocess.call([leftDisplayCommand, "drawLine", "74", "59", str(px), str(py)])
-    subprocess.call([leftDisplayCommand, "drawLine", "73", "58", str(px), str(py)])
+    subprocess.call([leftDisplayCommand, "setColor", color])
+    subprocess.call([leftDisplayCommand, "drawLine", "77", "62", str(x), str(y)])
+    subprocess.call([leftDisplayCommand, "drawLine", "76", "61", str(x), str(y)])        
+    subprocess.call([leftDisplayCommand, "drawLine", "75", "60", str(x), str(y)])
+    subprocess.call([leftDisplayCommand, "drawLine", "74", "59", str(x), str(y)])
+    subprocess.call([leftDisplayCommand, "drawLine", "73", "58", str(x), str(y)])
 
 # begin computer
 setupRightScreen()
 setupLeftScreen()
 secondsPassed = 0
 timeIsCorrect = False
+southPX = 0
+southPY = 0
+northPX = 0
+northPY = 0
+currentDirection = 0
+currentDirectionPrevious = 0
 while True:
 
     # each 10 seconds loop
@@ -297,36 +303,34 @@ while True:
         # calculate line angle from GPS degrees convert to radians, but only if we're actually moving more than 5mph
         if locationInfo != "":
             if (int(locationInfo['speed']) > 5):
-                currentDirection = locationInfo['track']
-                updateDirection(str(data.getHeadingByDegrees(currentDirection)))
+        
+                currentDirection = locationInfo['track']                
+                if currentDirection != currentDirectionPrevious:
+
+                    # update direction headed
+                    updateDirection(str(data.getHeadingByDegrees(currentDirection)))
+
+                    # clear heading
+                    setCompass(southPX, southPY, "0")
+                    setCompass(northPX, northPY, "0")
+
+                    # radians based on where true north is
+                    r = radians(360 - currentDirection)
+                    radius = 38
+
+                    # show south
+                    southPX = round(75 - radius * sin(r))
+                    southPY = round(60 + radius * cos(r))
+                    setCompass(southPX, southPY, "255")
+
+                    # show north
+                    northPX = round(75 + radius * sin(r))
+                    northPY = round(60 - radius * cos(r))
+                    setCompass(northPX,northPY, "224")
+                    currentDirectionPrevious = currentDirection
+
         else:
             updateDirection("    ")
-                
-                
-
-        
-        # radians based on where true north is
-        r = radians(360 - currentDirection)        
-        radius = 38
-
-        px = round(75 - radius * sin(r))
-        py = round(60 + radius * cos(r))
-        
-        setCompass(px,py, "0")
-        setCompass(px,py, "255")
-        
-        px = round(75 + radius * sin(r))
-        py = round(60 - radius * cos(r))
-        setCompass(px,py, "0")
-        setCompass(px,py, "224")
-
-    
-
-
-
-
-
-        
         
     secondsPassed = secondsPassed + 1
     time.sleep(1)
