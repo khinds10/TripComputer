@@ -10,12 +10,17 @@ import includes.data as data
 import info.CurrentReadings as CurrentReadings
 import info.WeatherDetails as WeatherDetails
 import info.GPSInfo as GPSInfo
+import info.Wifi as Wifi
 
 # setup the commands to drive the left and right screens
 leftDisplayCommand = "/home/pi/TripComputer/computer/left-display"
 rightDisplayCommand = "/home/pi/TripComputer/computer/right-display"
 
+# start logging wifi status
+data.removeJSONFile('wifi.data')
+
 def getNTPTime(host = "pool.ntp.org"):
+    ''' get time from the global NTP protocol '''
     port = 123
     buf = 1024
     address = (host,port)
@@ -180,13 +185,18 @@ def calculateInTrafficPercent(inTrafficTimeAmount, drivingTimeAmount):
     return str(percent)
 
 def toggleWifiIcon():
-    ''' toggle wifi icon based on if we have a valid ping from google or not '''
+    ''' toggle wifi icon based on if we have a valid ping from google or not and log that to file for other processes '''    
+    wifi = Wifi.Wifi()
     try:
         urllib2.urlopen('https://www.google.com', timeout=1)
         subprocess.call([leftDisplayCommand, "Wifi","105","10"])
-    except urllib2.URLError as err: 
+        wifi.isConnected = 'yes'
+        data.saveJSONObjToFile('wifi.data', wifi)    
+    except urllib2.URLError as err:
         subprocess.call([leftDisplayCommand, "NoWifi","105","10"])
-    
+        wifi.isConnected = 'no'
+        data.saveJSONObjToFile('wifi.data', wifi)    
+
 def checkTimeCorrect():
     ''' check if indeed the local time on the RPi is set according to internet time '''
 
@@ -238,6 +248,7 @@ northPX = 0
 northPY = 0
 currentDirection = 0
 currentDirectionPrevious = 0
+currentPhoneMessage = ''
 while True:
 
     # each 10 seconds loop
@@ -247,7 +258,7 @@ while True:
         # check time against internet
         if timeIsCorrect == False:
             timeIsCorrect = checkTimeCorrect()
-        
+
         if timeIsCorrect:
             updateTimeOfDay(dt.datetime.now().strftime('%I:%M%p %m/%d'))
         else:
