@@ -11,6 +11,7 @@ import info.CurrentReadings as CurrentReadings
 import info.WeatherDetails as WeatherDetails
 import info.GPSInfo as GPSInfo
 import info.Wifi as Wifi
+import info.Notification as Notification
 
 # setup the commands to drive the left and right screens
 leftDisplayCommand = "/home/pi/TripComputer/computer/left-display"
@@ -127,16 +128,13 @@ def updateDirection(compassDirectionNew):
     subprocess.call([leftDisplayCommand, "setColor", "249"])
     subprocess.call([leftDisplayCommand, "printxy_abs", "20", "23", compassDirectionNew])
     compassDirectionCurrent = compassDirectionNew
-    
-currentTimeAmount = ''
-def updateTimeOfDay(currentTimeNew):
+
+def updateSpecialMessage(newSpecialMessage):
     ''' update direction headed '''
-    global currentTimeAmount
     subprocess.call([leftDisplayCommand, "setColor", "0"])
-    subprocess.call([leftDisplayCommand, "printxy_abs", "5", "120", currentTimeAmount])
+    subprocess.call([leftDisplayCommand, "printxy_abs", "5", "120", '             '])
     subprocess.call([leftDisplayCommand, "setColor", "255"])
-    subprocess.call([leftDisplayCommand, "printxy_abs", "5", "120", currentTimeNew])
-    currentTimeAmount = currentTimeNew
+    subprocess.call([leftDisplayCommand, "printxy_abs", "5", "120", newSpecialMessage])
 
 def getTimeDriving():
     ''' update time driving from uptime command'''
@@ -186,16 +184,19 @@ def calculateInTrafficPercent(inTrafficTimeAmount, drivingTimeAmount):
 
 def toggleWifiIcon():
     ''' toggle wifi icon based on if we have a valid ping from google or not and log that to file for other processes '''    
+    global isInternetConnected
     wifi = Wifi.Wifi()
     try:
         urllib2.urlopen('https://www.google.com', timeout=1)
         subprocess.call([leftDisplayCommand, "Wifi","105","10"])
         wifi.isConnected = 'yes'
-        data.saveJSONObjToFile('wifi.data', wifi)    
+        data.saveJSONObjToFile('wifi.data', wifi)
+        isInternetConnected = True
     except urllib2.URLError as err:
         subprocess.call([leftDisplayCommand, "NoWifi","105","10"])
         wifi.isConnected = 'no'
-        data.saveJSONObjToFile('wifi.data', wifi)    
+        data.saveJSONObjToFile('wifi.data', wifi)
+        isInternetConnected = False
 
 def checkTimeCorrect():
     ''' check if indeed the local time on the RPi is set according to internet time '''
@@ -237,6 +238,30 @@ def setCompass(x,y, color):
     subprocess.call([leftDisplayCommand, "drawLine", "74", "59", str(x), str(y)])
     subprocess.call([leftDisplayCommand, "drawLine", "73", "58", str(x), str(y)])
 
+
+
+
+def scrollCurrentPhoneNotification():
+    ''' scroll throught the current message in the special message window '''
+    global currentPhoneMessage, currentScrolledPosition, scrolledTextLength, timesScrolled
+    totalScrollCharLength = len(list(currentPhoneMessage)) / scrolledTextLength + 1
+    
+    # scroll message at current position we're in
+    if currentScrolledPosition == 0:
+        updateSpecialMessage(currentPhoneMessage[0:13])    
+    else:
+        textStart = currentScrolledPosition*13
+        updateSpecialMessage(currentPhoneMessage[textStart:textStart+13])
+    currentScrolledPosition = currentScrolledPosition + 1
+    
+    if currentScrolledPosition > totalScrollCharLength:
+        currentScrolledPosition = 0
+        timesScrolled = timesScrolled + 1
+        
+    if timesScrolled > 3:
+        timesScrolled = 0
+        scrollCurrentMessage = False
+
 # begin computer
 setupRightScreen()
 setupLeftScreen()
@@ -248,22 +273,26 @@ northPX = 0
 northPY = 0
 currentDirection = 0
 currentDirectionPrevious = 0
+isInternetConnected = False
+
+# current phone message and flag if it should be scrolling through it or not
+prevPhoneMessage = ''
 currentPhoneMessage = ''
+scrollCurrentMessage = False
+currentScrolledPosition = 0
+timesScrolled = 0
+scrolledTextLength = 13
+
 while True:
+
+    # if flag set then scroll through current message
+    if scrollCurrentMessage:
+         scrollCurrentPhoneNotification()
 
     # each 10 seconds loop
     if (secondsPassed % 10 == 0):
         toggleWifiIcon()
-        
-        # check time against internet
-        if timeIsCorrect == False:
-            timeIsCorrect = checkTimeCorrect()
-
-        if timeIsCorrect:
-            updateTimeOfDay(dt.datetime.now().strftime('%I:%M%p %m/%d'))
-        else:
-            updateTimeOfDay('')
-
+       
         # update inside tempurature data
         tempInfo = data.getJSONFromDataFile('temp.data')
         if tempInfo == "":
@@ -305,9 +334,35 @@ while True:
         currentInTraffic = str(drivingStatistics['inTrafficTimes'][0])
         updatePercentTraffic(calculateInTrafficPercent(str(currentInTraffic), str(uptime)) + '%')
         
+        #        #if currentPhoneMessage
+
+        #        # check time against internet
+        #        if timeIsCorrect == False:
+        #            timeIsCorrect = checkTimeCorrect()
+
+        #        if timeIsCorrect:
+        #            updateSpecialMessage(dt.datetime.now().strftime('%I:%M%p %m/%d'))
+        #        else:
+        #            updateSpecialMessage('             ')
+        
+        # update new phone notification if set and internet connected      
+        if isInternetConnected:
+            notificationInfo = data.getJSONFromDataFile('notification.data')
+
+            if notificationInfo == "":
+                notificationInfo = Notification.Notification()
+                notificationInfo = json.loads(tempInfo.to_JSON())
+
+            # new message found, get the scroller going
+            if notificationInfo['message'] != prevPhoneMessage:
+                currentPhoneMessage = notificationInfo['message']
+                scrollCurrentMessage = True    
+                currentScrolledPosition = 0
+                prevPhoneMessage = currentPhoneMessage
+
     # each 2 seconds loop
     if (secondsPassed % 2 == 0):
-
+    
         # get current direction heading
         locationInfo = data.getJSONFromDataFile('location.data')
 
