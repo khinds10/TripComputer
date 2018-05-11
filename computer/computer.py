@@ -238,29 +238,15 @@ def setCompass(x,y, color):
     subprocess.call([leftDisplayCommand, "drawLine", "74", "59", str(x), str(y)])
     subprocess.call([leftDisplayCommand, "drawLine", "73", "58", str(x), str(y)])
 
-
-
-
-def scrollCurrentPhoneNotification():
-    ''' scroll throught the current message in the special message window '''
-    global currentPhoneMessage, currentScrolledPosition, scrolledTextLength, timesScrolled
-    totalScrollCharLength = len(list(currentPhoneMessage)) / scrolledTextLength + 1
+def checkLatestNotification():
+    ''' get the latest phone notification set from the other script '''
+    notificationInfo = data.getJSONFromDataFile('notification.data')
     
-    # scroll message at current position we're in
-    if currentScrolledPosition == 0:
-        updateSpecialMessage(currentPhoneMessage[0:13])    
-    else:
-        textStart = currentScrolledPosition*13
-        updateSpecialMessage(currentPhoneMessage[textStart:textStart+13])
-    currentScrolledPosition = currentScrolledPosition + 1
-    
-    if currentScrolledPosition > totalScrollCharLength:
-        currentScrolledPosition = 0
-        timesScrolled = timesScrolled + 1
-        
-    if timesScrolled > 3:
-        timesScrolled = 0
-        scrollCurrentMessage = False
+    if notificationInfo == "":
+        notificationInfo = Notification.Notification()
+        notificationInfo = json.loads(tempInfo.to_JSON())
+
+    return notificationInfo
 
 # begin computer
 setupRightScreen()
@@ -276,7 +262,9 @@ currentDirectionPrevious = 0
 isInternetConnected = False
 
 # current phone message and flag if it should be scrolling through it or not
-prevPhoneMessage = ''
+#    the previous message is always the initial one set from before you started driving
+notificationInfo = checkLatestNotification()
+prevPhoneMessage = notificationInfo['message']
 currentPhoneMessage = ''
 scrollCurrentMessage = False
 currentScrolledPosition = 0
@@ -287,10 +275,45 @@ while True:
 
     # if flag set then scroll through current message
     if scrollCurrentMessage:
-         scrollCurrentPhoneNotification()
+        totalScrollCharLength = len(list(currentPhoneMessage)) / scrolledTextLength + 1
+        
+        # scroll message at current position we're in
+        if currentScrolledPosition == 0:
+            updateSpecialMessage(currentPhoneMessage[0:13])    
+        else:
+            textStart = currentScrolledPosition*13
+            updateSpecialMessage(currentPhoneMessage[textStart:textStart+13])
+        currentScrolledPosition = currentScrolledPosition + 1
+        
+        if currentScrolledPosition > totalScrollCharLength:
+            currentScrolledPosition = 0
+            timesScrolled = timesScrolled + 1
+            
+        if timesScrolled > 4:
+            timesScrolled = 0
+            scrollCurrentMessage = False
 
     # each 10 seconds loop
     if (secondsPassed % 10 == 0):
+
+        # check time against internet
+        if scrollCurrentMessage == False:
+            if timeIsCorrect == False and isInternetConnected:
+                timeIsCorrect = checkTimeCorrect()
+            if timeIsCorrect:
+                updateSpecialMessage(dt.datetime.now().strftime('%I:%M%p %m/%d'))
+            else:
+                updateSpecialMessage('             ')
+
+        # new message found, get the scroller going
+        notificationInfo = checkLatestNotification()
+        if notificationInfo['message'] != prevPhoneMessage:
+            currentPhoneMessage = notificationInfo['message']
+            scrollCurrentMessage = True    
+            currentScrolledPosition = 0
+            prevPhoneMessage = currentPhoneMessage
+    
+        # turn the WiFi icon on / off depending
         toggleWifiIcon()
        
         # update inside tempurature data
@@ -333,32 +356,6 @@ while True:
         # current in-traffic time
         currentInTraffic = str(drivingStatistics['inTrafficTimes'][0])
         updatePercentTraffic(calculateInTrafficPercent(str(currentInTraffic), str(uptime)) + '%')
-        
-        #        #if currentPhoneMessage
-
-        #        # check time against internet
-        #        if timeIsCorrect == False:
-        #            timeIsCorrect = checkTimeCorrect()
-
-        #        if timeIsCorrect:
-        #            updateSpecialMessage(dt.datetime.now().strftime('%I:%M%p %m/%d'))
-        #        else:
-        #            updateSpecialMessage('             ')
-        
-        # update new phone notification if set and internet connected      
-        if isInternetConnected:
-            notificationInfo = data.getJSONFromDataFile('notification.data')
-
-            if notificationInfo == "":
-                notificationInfo = Notification.Notification()
-                notificationInfo = json.loads(tempInfo.to_JSON())
-
-            # new message found, get the scroller going
-            if notificationInfo['message'] != prevPhoneMessage:
-                currentPhoneMessage = notificationInfo['message']
-                scrollCurrentMessage = True    
-                currentScrolledPosition = 0
-                prevPhoneMessage = currentPhoneMessage
 
     # each 2 seconds loop
     if (secondsPassed % 2 == 0):
@@ -394,7 +391,6 @@ while True:
                     northPY = round(60 - radius * cos(r))
                     setCompass(northPX,northPY, "224")
                     currentDirectionPrevious = currentDirection
-
         else:
             updateDirection("    ")
         
