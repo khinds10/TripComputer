@@ -13,7 +13,12 @@ class WeatherDetails:
     humidity = 0
     precipIntensity = 0
     precipProbability = 0
-    windSpeed = 0
+    windSpeed = 0    
+    isPrecip = False
+    precipStopping = False
+    precipStarting = False
+    solidPrecip = False
+    minute = 0
     
     def __init__(self):
         self.time = 0
@@ -24,7 +29,12 @@ class WeatherDetails:
         self.humidity = 0
         self.precipIntensity = 0
         self.precipProbability = 0
-        self.windSpeed = 0
+        self.windSpeed = 0        
+        self.isPrecip = False
+        self.precipStopping = False
+        self.precipStarting = False
+        self.solidPrecip = False
+        self.minute = 0
         
     def to_JSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

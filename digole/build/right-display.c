@@ -35,6 +35,8 @@
 #include "Temp.h"
 #include "NoWifi.h"
 #include "Wifi.h"
+#include "Rain.h"
+#include "Snow.h"
 
 #define _TEXT_ 0
 #define _GRAPH_ 1
@@ -555,8 +557,12 @@ int main (int argc, char* argv[]) {
         drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &NoWifi,0);
     } else if (strcmp(digoleCommand, "Wifi") == 0) {
         drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 15, 15, &Wifi,0);
+    } else if (strcmp(digoleCommand, "Rain") == 0) {
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 20, 20, &Rain,0);
+    } else if (strcmp(digoleCommand, "Snow") == 0) {
+        drawBitmap256((uint8_t)atoi(argv[2]), (uint8_t)atoi(argv[3]), 20, 20, &Snow,0);
     }
-
+    
     printf("\n");
 	return 0;
 }

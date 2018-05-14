@@ -153,7 +153,6 @@ def percentage(part, whole):
         
 def timeStringToMinutes(timeString):
     '''break down the string such as "2h4m" to just minutes as integer'''
-
     # extract minutes
     try:
         timeStringMinutes = re.findall("[0-9]+m", timeString)
@@ -200,7 +199,6 @@ def toggleWifiIcon():
 
 def checkTimeCorrect():
     ''' check if indeed the local time on the RPi is set according to internet time '''
-
     try: 
         timeIsSet = True
         internetTime = getNTPTime().split()
@@ -241,12 +239,41 @@ def setCompass(x,y, color):
 def checkLatestNotification():
     ''' get the latest phone notification set from the other script '''
     notificationInfo = data.getJSONFromDataFile('notification.data')
-    
     if notificationInfo == "":
         notificationInfo = Notification.Notification()
         notificationInfo = json.loads(tempInfo.to_JSON())
-
     return notificationInfo
+
+def showPrecipAlert(weatherInfo):
+    ''' show any alerts about upcoming rain/snow based on time temperature '''
+
+    # reset the alert
+    subprocess.call([leftDisplayCommand, "setFont", "10"])
+    subprocess.call([leftDisplayCommand, "setColor", "0"])
+    subprocess.call([leftDisplayCommand, "printxy_abs", "5", "80", '    '])
+    subprocess.call([leftDisplayCommand, "printxy_abs", "10", "95", '    '])
+    subprocess.call([leftDisplayCommand, "setColor", "223"])
+    
+    # show rain or snow based on temperature
+    precipType = 'Rain'
+    if int(weatherInfo['apparentTemperature']) < 32:
+        precipType = 'Snow'
+    
+    # if alert present then show
+    if weatherInfo['isPrecip']:
+        subprocess.call([leftDisplayCommand, precipType,"3","45"])
+        
+        # solid precip, just say so
+        if weatherInfo['solidPrecip']:
+            subprocess.call([leftDisplayCommand, "printxy_abs", "5", "80", precipType])
+        else:        
+            # show precip ending or starting and number of minutes
+            if weatherInfo['precipStarting']:
+                subprocess.call([leftDisplayCommand, "printxy_abs", "5", "80", 'in'])
+            else:
+                subprocess.call([leftDisplayCommand, "printxy_abs", "5", "80", 'end'])
+            subprocess.call([leftDisplayCommand, "printxy_abs", "10", "95", str(weatherInfo['minute']) + 'm'])
+    subprocess.call([leftDisplayCommand, "setFont", "18"])
 
 # begin computer
 setupRightScreen()
@@ -270,7 +297,6 @@ scrollCurrentMessage = False
 currentScrolledPosition = 0
 timesScrolled = 0
 scrolledTextLength = 13
-
 while True:
 
     # if flag set then scroll through current message
@@ -338,6 +364,9 @@ while True:
         else:
             outsideTemp = "(" + outsideTemp + ")"
         updateTemps(insideTemp,outsideTemp)
+        
+        # show any upcoming precipitation alerts
+        showPrecipAlert(weatherInfo)
         
         # get current driving stats
         drivingStatistics = data.getJSONFromDataFile('stats.data')
