@@ -1,16 +1,16 @@
 {
-    "apparentTemperature": 75, 
-    "humidity": 0.54, 
-    "icon": "partly-cloudy-day", 
+    "apparentTemperature": 84.36, 
+    "humidity": 0.49, 
+    "icon": "clear-day", 
     "isPrecip": true, 
-    "minute": 26, 
-    "nextHour": "Partly cloudy for the hour.", 
+    "minute": 40, 
+    "nextHour": "Possible light rain starting in 40 min.", 
     "precipIntensity": 0.0, 
     "precipProbability": 0.0, 
-    "precipStarting": true,
-    "precipStopping": false,
-    "solidPrecip": false,
-    "summary": "Partly Cloudy", 
-    "time": 1526325800, 
-    "windSpeed": 3.54
+    "precipStarting": true, 
+    "precipStopping": false, 
+    "solidPrecip": false, 
+    "summary": "Clear", 
+    "time": 1526414343, 
+    "windSpeed": 6.83
 }

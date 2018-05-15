@@ -59,7 +59,7 @@ while True:
             weatherDetails.minute = weatherDetails.minute + 1
 
         # if we've went through the whole hour, then it's solid precip
-        if weatherDetails.isPrecip and (minute > 59):
+        if weatherDetails.isPrecip and (weatherDetails.minute > 59):
             weatherDetails.solidPrecip = True
 
         # create or rewrite data to weather data file as JSON, then wait 5 minutes
@@ -69,4 +69,4 @@ while True:
     except (Exception):
     
         # GPS is not fixed or network issue, wait 30 seconds
-        time.sleep(30)
+        #time.sleep(30)
