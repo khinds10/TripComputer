@@ -12,7 +12,7 @@ class GPSInfo:
     climb = 0
     track = 0
     mode = 0
-    time = 0
+    timeSet = False
     
     def __init__(self):
         self.latitude = 0
@@ -22,7 +22,7 @@ class GPSInfo:
         self.climb = 0
         self.track = 0
         self.mode = 0
-        self.time = 0
+        self.timeSet = False
         
     def to_JSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

@@ -20,26 +20,6 @@ rightDisplayCommand = "/home/pi/TripComputer/computer/right-display"
 # start logging wifi status
 data.removeJSONFile('wifi.data')
 
-def getNTPTime(host = "pool.ntp.org"):
-    ''' get time from the global NTP protocol '''
-    port = 123
-    buf = 1024
-    address = (host,port)
-    msg = '\x1b' + 47 * '\0'
-
-    # reference time (in seconds since 1900-01-01 00:00:00)
-    TIME1970 = 2208988800L # 1970-01-01 00:00:00
-
-    # connect to server
-    client = socket.socket(AF_INET, SOCK_DGRAM)
-    client.settimeout(2)
-    client.sendto(msg, address)
-    msg, address = client.recvfrom( buf )
-
-    t = struct.unpack( "!12I", msg )[10]
-    t -= TIME1970
-    return time.ctime(t).replace("  "," ")
-
 def setupRightScreen():
     ''' setup initial right hand screen '''
     subprocess.call([rightDisplayCommand, "clear"])
@@ -197,32 +177,6 @@ def toggleWifiIcon():
         data.saveJSONObjToFile('wifi.data', wifi)
         isInternetConnected = False
 
-def checkTimeCorrect():
-    ''' check if indeed the local time on the RPi is set according to internet time '''
-    try: 
-        timeIsSet = True
-        internetTime = getNTPTime().split()
-        localTime = subprocess.check_output(['date']).split()
-
-        # check date is correct
-        internetTimeSet = internetTime[3].split(':')
-        localTimeSet = localTime[3].split(':')
-        if internetTime[0] != localTime[0]:
-            timeIsSet = False
-        if internetTime[2] != localTime[1]:
-            timeIsSet = False
-            
-        # check clock is correct
-        internetTimeSet = internetTime[3].split(':')
-        localTimeSet = localTime[3].split(':')
-        if internetTimeSet[0] != localTimeSet[0]:
-            timeIsSet = False
-        if internetTimeSet[1] != localTimeSet[1]:
-            timeIsSet = False
-    except:
-        timeIsSet = False
-    return timeIsSet
-
 def setCompass(x,y, color):
     ''' for x,y direction coordinates and color draw the compass with needle '''
     subprocess.call([leftDisplayCommand, "setColor", "255"])
@@ -279,7 +233,7 @@ def showPrecipAlert(weatherInfo):
 setupRightScreen()
 setupLeftScreen()
 secondsPassed = 0
-timeIsCorrect = False
+timeIsSet = False
 southPX = 0
 southPY = 0
 northPX = 0
@@ -324,9 +278,7 @@ while True:
 
         # check time against internet
         if scrollCurrentMessage == False:
-            if timeIsCorrect == False and isInternetConnected:
-                timeIsCorrect = checkTimeCorrect()
-            if timeIsCorrect:
+            if timeIsSet:
                 updateSpecialMessage(dt.datetime.now().strftime('%I:%M%p %m/%d'))
             else:
                 updateSpecialMessage('             ')
@@ -391,7 +343,8 @@ while True:
     
         # get current direction heading
         locationInfo = data.getJSONFromDataFile('location.data')
-
+        timeIsSet = locationInfo['timeSet']
+        
         # calculate line angle from GPS degrees convert to radians, but only if we're actually moving more than 5mph
         if locationInfo != "":
             if (int(locationInfo['speed']) > 5):

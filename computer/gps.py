@@ -52,6 +52,12 @@ if __name__ == '__main__':
                 gpsInfo.altitude = float(gpsd.fix.altitude * 3.2808)
                 gpsInfo.climb = float(gpsd.fix.climb * 3.2808)
                 
+                # set clock from GPS
+                if gpsd.utc != None and gpsd.utc != '' and gpsInfo.timeSet == False:
+                    gpsutc = gpsd.utc[0:4] + gpsd.utc[5:7] + gpsd.utc[8:10] + ' ' + gpsd.utc[11:19]
+                    gpsInfo.timeSet = True
+                    os.system('sudo date -u --set="%s"' % gpsutc)
+
                 # correct for bad speed value on the device
                 #   also save to last location because it must be good with a valid speed present
                 gpsInfo.speed = float(gpsd.fix.speed)
@@ -61,15 +67,12 @@ if __name__ == '__main__':
                 
                 # create or rewrite data to GPS location data file as JSON
                 data.saveJSONObjToFile('location.data', gpsInfo)
-                
-                # set clock from GPS
-                if gpsd.utc != None and gpsd.utc != '':
-                    gpsutc = gpsd.utc[0:4] + gpsd.utc[5:7] + gpsd.utc[8:10] + ' ' + gpsd.utc[11:19]
-                    os.system('sudo date -u --set="%s"' % gpsutc)
+                    
                 time.sleep(1)
             
             except (Exception):
                 pass
+
     except (KeyboardInterrupt, SystemExit):
         print "\nKilling Thread..."
         gpsp.running = False
