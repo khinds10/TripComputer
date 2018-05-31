@@ -8,7 +8,6 @@ import includes.postgres as postgres
 import info.CurrentReadings as CurrentReadings
 import info.WeatherDetails as WeatherDetails
 import info.GPSInfo as GPSInfo
-import info.DrivingStatistics as DrivingStatistics
 import info.CurrentReadings as CurrentReadings
 import info.LocaleDetails as LocaleDetails
 
