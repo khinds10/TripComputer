@@ -129,8 +129,11 @@ def getTimeDriving():
     
 def percentage(part, whole):
     '''get percent as a float'''
-    return 100 * float(part)/float(whole)
-        
+    try:
+        return 100 * float(part)/float(whole)
+    except:
+        return 0
+
 def timeStringToMinutes(timeString):
     '''break down the string such as "2h4m" to just minutes as integer'''
     # extract minutes

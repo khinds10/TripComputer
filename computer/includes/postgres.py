@@ -23,6 +23,10 @@ def getNewTripStartID():
     """get the highest DB row indentifier where a new trip starts"""
     return getOneResult("SELECT max(id) FROM driving_stats WHERE new_trip_start IS NOT NULL")
     
+def getResultsToUpload(fromTime):
+    """get the results starting from datetime to upload to another database"""
+    return getAllResults("SELECT gps_latitude, gps_longitude, gps_speed, gps_altitude, locale_area, locale_city, inside_temp, weather_summary, weather_apparenttemperature, weather_windspeed FROM driving_stats WHERE time >= '" + fromTime + "'") 
+    
 def getDrivingTimes(tripStartId):
     """get the driving times for current trip, day, week and month"""
     return [getOneResult("SELECT count(id) FROM driving_stats WHERE id > " + str(tripStartId)), getDrivingTimeByInterval("count(id)", "1 day")]
