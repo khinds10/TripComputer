@@ -25,7 +25,7 @@ def getNewTripStartID():
     
 def getResultsToUpload(fromTime):
     """get the results starting from datetime to upload to another database"""
-    return getAllResults("SELECT gps_latitude, gps_longitude, gps_speed, gps_altitude, locale_area, locale_city, inside_temp, weather_summary, weather_apparenttemperature, weather_windspeed FROM driving_stats WHERE time >= '" + fromTime + "'") 
+    return getAllResults("SELECT time, gps_latitude, gps_longitude, gps_speed, gps_altitude, locale_area, locale_city, inside_temp, weather_summary, weather_apparenttemperature, weather_windspeed FROM driving_stats WHERE time >= '" + fromTime + "'") 
     
 def getDrivingTimes(tripStartId):
     """get the driving times for current trip, day, week and month"""

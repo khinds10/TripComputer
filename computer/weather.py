@@ -69,4 +69,4 @@ while True:
     except (Exception):
     
         # GPS is not fixed or network issue, wait 30 seconds
-        #time.sleep(30)
+        time.sleep(30)
