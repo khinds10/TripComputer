@@ -9,11 +9,32 @@ import info.Notification as Notification
 
 # start logging notifications
 data.removeJSONFile('notification.data')
-while True:
+previousMessage = "Welcome to Kevin's Car"
 
-    wifi = data.getJSONFromDataFile('wifi.data')
-    if wifi['isConnected'] == 'yes':
-        notification = Notification.Notification()
-        notification.message = 'NEW message test NEW message test NEW message test'
-        data.saveJSONObjToFile('notification.data', notification)
+def checkForMessage():
+    """check for new messages"""
+    incomingMessage = json.loads(unicode(subprocess.check_output(['curl', settings.dashboardServer + "/message"]), errors='ignore'))
+    message = str(incomingMessage["message"])
+    message = message[:maxMessageLength]
+
+def saveMessageToFile(message):
+    """save new notification message to file for gauge to display"""
+    notification = Notification.Notification()
+    data.saveJSONObjToFile('notification.data', notification)
+    
+# save the initial welcome message
+saveMessageToFile(previousMessage)
+
+# each 5 seconds check for new messages
+while True:
+    try:
+        # if message has changed, then save the new one to the file
+        checkForMessage()
+        if (previousMessage != message):
+            saveMessageToFile(message)
+            previousMessage = message  
+    
+    except (Exception):
+        pass
     time.sleep(5)
+

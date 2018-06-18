@@ -1,8 +1,7 @@
 #!/usr/bin/python
-# Trip Computer - Dual Display Dashboard Trip Computer
+# Trip Computer - Dual Display Dashboard Trip Computer (Gauge Controller)
 # Kevin Hinds http://www.kevinhinds.com
 # License: GPL 2.0
-from socket import AF_INET, SOCK_DGRAM
 import datetime as dt
 from math import cos, sin, pi, radians
 import cgi, json, re, socket, string, struct, subprocess, sys, time, urllib2

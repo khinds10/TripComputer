@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# Get GPS readings and save to file
+# Run GPS Breakout board w/MTK3339 chipset
 # Kevin Hinds http://www.kevinhinds.com / Dan Mandle http://dan.mandle.me
 # License: GPL 2.0
 import os, time, threading, pprint, json, math, sys
@@ -14,7 +14,7 @@ gpsd = None
 
 # start a new trip by inserting the new trip DB entry
 postgres.startNewTrip()
-data.removeJSONFile('location.data')
+data.removeJSONFile('gps.data')
 
 class GpsPoller(threading.Thread):
   '''create a threaded class for polling on the GPS sensor '''
@@ -66,7 +66,7 @@ if __name__ == '__main__':
                     data.saveJSONObjToFile('last-location.data', gpsInfo)
                 
                 # create or rewrite data to GPS location data file as JSON
-                data.saveJSONObjToFile('location.data', gpsInfo)
+                data.saveJSONObjToFile('gps.data', gpsInfo)
                     
                 time.sleep(1)
             

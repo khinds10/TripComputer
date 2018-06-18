@@ -9,11 +9,9 @@ import requests
 
 # sync local driving DB data to remote DB each 5 minutes
 while True:
-
     try:
-        
         # get last known recorded timestamp from the central DB
-        currentSyncInfo = json.loads(subprocess.check_output(['curl', settings.dashboardServer + '/upload.php?action=sync&device=trip-computer' ]))
+        currentSyncInfo = json.loads(subprocess.check_output(['curl', settings.devicesServer + '/upload.php?action=sync&device=trip-computer' ]))
         postData = postgres.getResultsToUpload(fromTime)
 
         # get the rows as a list of lists with the datetime converted to MYSQL friendly string
@@ -22,11 +20,9 @@ while True:
             insertRows.append([item[0].strftime('%Y-%m-%d %H:%M:%S'), item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9]])
 
         # post data to distributed DB
-        requests.post(settings.dashboardServer + '/upload.php?action=upload&device=trip-computer', data = {'data' :  json.dumps(insertRows)})
+        requests.post(settings.devicesServer + '/upload.php?action=upload&device=trip-computer', data = {'data' :  json.dumps(insertRows)})
     
     except (Exception):
-    
         # GPS is not fixed or network issue, wait 30 seconds
         time.sleep(30)
-    
     time.sleep(300)

@@ -9,5 +9,8 @@ logFilesLocation = '/home/pi/TripComputer/computer/logs/'
 weatherAPIURL = 'https://api.forecast.io/forecast/'
 weatherAPIKey = 'API KEY HERE'
 
+# if you have the device hub project running (https://github.com/khinds10/DeviceHub)
+devicesServer = 'http://my.server.com'
+
 # if you have the dashboard phone project running (https://github.com/khinds10/RetroDashboard)
-dashboardServer = 'my.server.com'
+dashboardServer = 'http://my.server.com'

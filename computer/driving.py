@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Log to database the current readings for all known info each second
+# Log to database the current readings for all known info each second as you're driving
 # Kevin Hinds http://www.kevinhinds.com
 # License: GPL 2.0
 import os, time, json
@@ -15,21 +15,25 @@ import info.LocaleDetails as LocaleDetails
 while True:
     try:
         locationInfo = data.getJSONFromDataFile('location.data')
+        print locationInfo
         if locationInfo == "":
             locationInfo = GPSInfo.GPSInfo()
             locationInfo = json.loads(locationInfo.to_JSON())
         
         localeInfo = data.getJSONFromDataFile('locale.data')
+        print localeInfo
         if localeInfo == "":
             localeInfo = LocaleDetails.LocaleDetails()
             localeInfo = json.loads(localeInfo.to_JSON())
         
         tempInfo = data.getJSONFromDataFile('temp.data')
+        print tempInfo
         if tempInfo == "":
             tempInfo = CurrentReadings.CurrentReadings()
             tempInfo = json.loads(tempInfo.to_JSON())
         
         weatherInfo = data.getJSONFromDataFile('weather.data')
+        print weatherInfo
         if weatherInfo == "":
             weatherInfo = WeatherDetails.WeatherDetails()
             weatherInfo = json.loads(weatherInfo.to_JSON())

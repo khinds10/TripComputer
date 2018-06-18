@@ -23,7 +23,7 @@ while True:
         localeDetails.country = str(localeInfo['results'][5]['formatted_address'])
 
         # create or rewrite data to locale data file as JSON
-        data.saveJSONObjToFile('locale.data', localeDetails)
+        data.saveJSONObjToFile('address.data', localeDetails)
         
     except (Exception):
         # GPS or network not available, wait 5 seconds
