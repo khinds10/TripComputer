@@ -5,7 +5,7 @@
 import os, time, json
 import includes.data as data
 import includes.postgres as postgres
-import info.DrivingStatistics as DrivingStatistics
+import info.Statistics as Statistics
 
 # get the beginning of the trip
 thisTripStartID = postgres.getNewTripStartID()
@@ -16,7 +16,7 @@ data.removeJSONFile('stats.data')
 while True:
     try:
 
-	    drivingStatistics = DrivingStatistics.DrivingStatistics()
+	    drivingStatistics = Statistics.Statistics()
 	    drivingTimes = postgres.getDrivingTimes(thisTripStartID)
 	    avgSpeeds = postgres.getAverageSpeeds(thisTripStartID)
 	    drivingStatistics.drivingTimes = map(data.convertHumanReadable, drivingTimes)

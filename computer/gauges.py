@@ -11,6 +11,7 @@ import info.WeatherDetails as WeatherDetails
 import info.GPSInfo as GPSInfo
 import info.Wifi as Wifi
 import info.Notification as Notification
+import info.Statistics as Statistics
 
 # setup the commands to drive the left and right screens
 leftDisplayCommand = "/home/pi/TripComputer/computer/left-display"
@@ -344,7 +345,7 @@ while True:
     if (secondsPassed % 2 == 0):
     
         # get current direction heading
-        locationInfo = data.getJSONFromDataFile('location.data')
+        locationInfo = data.getJSONFromDataFile('gps.data')
         timeIsSet = locationInfo['timeSet']
         
         # calculate line angle from GPS degrees convert to radians, but only if we're actually moving more than 5mph
