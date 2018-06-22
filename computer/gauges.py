@@ -198,8 +198,9 @@ def checkLatestNotification():
     notificationInfo = data.getJSONFromDataFile('notification.data')
     if notificationInfo == "":
         notificationInfo = Notification.Notification()
-        notificationInfo = json.loads(tempInfo.to_JSON())
+        notificationInfo = json.loads(notificationInfo.to_JSON())
     return notificationInfo
+    
 
 def showPrecipAlert(weatherInfo):
     ''' show any alerts about upcoming rain/snow based on time temperature '''
@@ -245,10 +246,8 @@ currentDirection = 0
 currentDirectionPrevious = 0
 isInternetConnected = False
 
-# current phone message and flag if it should be scrolling through it or not
-#    the previous message is always the initial one set from before you started driving
-notificationInfo = checkLatestNotification()
-prevPhoneMessage = notificationInfo['message']
+# current phone message and flags if it should be scrolling through it or not
+prevPhoneMessage = ''
 currentPhoneMessage = ''
 scrollCurrentMessage = False
 currentScrolledPosition = 0
@@ -258,125 +257,150 @@ while True:
 
     # if flag set then scroll through current message
     if scrollCurrentMessage:
-        totalScrollCharLength = len(list(currentPhoneMessage)) / scrolledTextLength + 1
-        
-        # scroll message at current position we're in
-        if currentScrolledPosition == 0:
-            updateSpecialMessage(currentPhoneMessage[0:13])    
-        else:
-            textStart = currentScrolledPosition*13
-            updateSpecialMessage(currentPhoneMessage[textStart:textStart+13])
-        currentScrolledPosition = currentScrolledPosition + 1
-        
-        if currentScrolledPosition > totalScrollCharLength:
-            currentScrolledPosition = 0
-            timesScrolled = timesScrolled + 1
+        try:
+            totalScrollCharLength = len(list(currentPhoneMessage)) / scrolledTextLength + 1
             
-        if timesScrolled > 4:
-            timesScrolled = 0
-            scrollCurrentMessage = False
+            # scroll message at current position we're in
+            if currentScrolledPosition == 0:
+                updateSpecialMessage(currentPhoneMessage[0:13])    
+            else:
+                textStart = currentScrolledPosition*13
+                updateSpecialMessage(currentPhoneMessage[textStart:textStart+13])
+            currentScrolledPosition = currentScrolledPosition + 1
+            
+            if currentScrolledPosition > totalScrollCharLength:
+                currentScrolledPosition = 0
+                timesScrolled = timesScrolled + 1
+                
+            if timesScrolled > 4:
+                timesScrolled = 0
+                scrollCurrentMessage = False
+        except (Exception):
+            pass
 
     # each 10 seconds loop
     if (secondsPassed % 10 == 0):
 
-        # check time against internet
-        if scrollCurrentMessage == False:
-            if timeIsSet:
-                updateSpecialMessage(dt.datetime.now().strftime('%I:%M%p %m/%d'))
-            else:
-                updateSpecialMessage('             ')
+        try:
+            # check time against internet
+            if scrollCurrentMessage == False:
+                if timeIsSet:
+                    updateSpecialMessage(dt.datetime.now().strftime('%I:%M%p %m/%d'))
+                else:
+                    updateSpecialMessage('             ')
 
-        # new message found, get the scroller going
-        notificationInfo = checkLatestNotification()
-        if notificationInfo['message'] != prevPhoneMessage:
-            currentPhoneMessage = notificationInfo['message']
-            scrollCurrentMessage = True    
-            currentScrolledPosition = 0
-            prevPhoneMessage = currentPhoneMessage
-    
-        # turn the WiFi icon on / off depending
-        toggleWifiIcon()
-       
-        # update inside tempurature data
-        tempInfo = data.getJSONFromDataFile('temp.data')
-        if tempInfo == "":
-            tempInfo = CurrentReadings.CurrentReadings()
-            tempInfo = json.loads(tempInfo.to_JSON())
-    
-        # get outside weather info
-        weatherInfo = data.getJSONFromDataFile('weather.data')
-        if weatherInfo == "":
-            weatherInfo = WeatherDetails.WeatherDetails()
-            weatherInfo = json.loads(weatherInfo.to_JSON())
+            # new message found, get the scroller going
+            notificationInfo = checkLatestNotification()
+            if notificationInfo['message'] != prevPhoneMessage:
+                currentPhoneMessage = notificationInfo['message']
+                scrollCurrentMessage = True    
+                currentScrolledPosition = 0
+                prevPhoneMessage = currentPhoneMessage
+        except (Exception):
+            pass
 
-        # update inside and outside weather
-        insideTemp = str(tempInfo['temp']) + "f"
-        if int(tempInfo['temp']) == 0:
+        try:
+            # turn the WiFi icon on / off depending
+            toggleWifiIcon()
+        except (Exception):
+            pass
+   
+        try:
+            # update inside tempurature data
+            tempInfo = data.getJSONFromDataFile('temp.data')
+            if tempInfo == "":
+                tempInfo = CurrentReadings.CurrentReadings()
+                tempInfo = json.loads(tempInfo.to_JSON())
+
+            # update inside and outside weather
+            insideTemp = str(tempInfo['temp']) + "f"
+            if int(tempInfo['temp']) == 0:
+                insideTemp = "--f"
+        except (Exception):
             insideTemp = "--f"
-        outsideTemp = str(int(weatherInfo['apparentTemperature'])) + "f"
-        if int(weatherInfo['apparentTemperature']) == 0:
+   
+        try:
+            # get outside weather info
+            weatherInfo = data.getJSONFromDataFile('weather.data')
+            if weatherInfo == "":
+                weatherInfo = WeatherDetails.WeatherDetails()
+                weatherInfo = json.loads(weatherInfo.to_JSON())
+
+            outsideTemp = str(int(weatherInfo['apparentTemperature'])) + "f"
+            if int(weatherInfo['apparentTemperature']) == 0:
+                outsideTemp = "     "
+            else:
+                outsideTemp = "(" + outsideTemp + ")"
+                
+            # show any upcoming precipitation alerts
+            showPrecipAlert(weatherInfo)
+                
+        except (Exception):
             outsideTemp = "     "
-        else:
-            outsideTemp = "(" + outsideTemp + ")"
+
         updateTemps(insideTemp,outsideTemp)
-        
-        # show any upcoming precipitation alerts
-        showPrecipAlert(weatherInfo)
-        
-        # get current driving stats
-        drivingStatistics = data.getJSONFromDataFile('stats.data')
-        if drivingStatistics == "":
-            drivingStatistics = DrivingStatistics.DrivingStatistics()
-            drivingStatistics = json.loads(tempInfo.to_JSON())
+            
+        try:
+            # get current driving stats
+            drivingStatistics = data.getJSONFromDataFile('stats.data')
+            if drivingStatistics == "":
+                drivingStatistics = DrivingStatistics.DrivingStatistics()
+                drivingStatistics = json.loads(tempInfo.to_JSON())
 
-        # average speed
-        updateAvgMPH(str(drivingStatistics['averageSpeeds'][0]) + 'mph')
-        
-        # current driving time / miles travelled
-        uptime = getTimeDriving()
-        updateDrivingTime(str(uptime) + ' - ' + str(drivingStatistics['milesTravelled'][0]) + 'mi')
-        updateDailyDrivingTime(str(drivingStatistics['drivingTimes'][1]) + ' - ' + str(drivingStatistics['milesTravelled'][1]) + 'mi')
-        
-        # current in-traffic time
-        currentInTraffic = str(drivingStatistics['inTrafficTimes'][0])
-        updatePercentTraffic(calculateInTrafficPercent(str(currentInTraffic), str(uptime)) + '%')
+            # average speed
+            updateAvgMPH(str(drivingStatistics['averageSpeeds'][0]) + 'mph')
+            
+            # current driving time / miles travelled
+            uptime = getTimeDriving()
+            updateDrivingTime(str(uptime) + ' - ' + str(drivingStatistics['milesTravelled'][0]) + 'mi')
+            updateDailyDrivingTime(str(drivingStatistics['drivingTimes'][1]) + ' - ' + str(drivingStatistics['milesTravelled'][1]) + 'mi')
+            
+            # current in-traffic time
+            currentInTraffic = str(drivingStatistics['inTrafficTimes'][0])
+            updatePercentTraffic(calculateInTrafficPercent(str(currentInTraffic), str(uptime)) + '%')
 
+        except (Exception):
+            pass
+    
     # each 2 seconds loop
     if (secondsPassed % 2 == 0):
     
-        # get current direction heading
-        locationInfo = data.getJSONFromDataFile('gps.data')
-        timeIsSet = locationInfo['timeSet']
-        
-        # calculate line angle from GPS degrees convert to radians, but only if we're actually moving more than 5mph
-        if locationInfo != "":
-            if (int(locationInfo['speed']) > 5):
-        
-                currentDirection = locationInfo['track']                
-                if currentDirection != currentDirectionPrevious:
+        try:
+            # get current direction heading
+            locationInfo = data.getJSONFromDataFile('gps.data')
+            timeIsSet = locationInfo['timeSet']
+            
+            # calculate line angle from GPS degrees convert to radians, but only if we're actually moving more than 5mph
+            if locationInfo != "":
+                if (int(locationInfo['speed']) > 5):
+            
+                    currentDirection = locationInfo['track']                
+                    if currentDirection != currentDirectionPrevious:
 
-                    # update direction headed
-                    updateDirection(str(data.getHeadingByDegrees(currentDirection)))
+                        # update direction headed
+                        updateDirection(str(data.getHeadingByDegrees(currentDirection)))
 
-                    # clear heading
-                    setCompass(southPX, southPY, "0")
-                    setCompass(northPX, northPY, "0")
+                        # clear heading
+                        setCompass(southPX, southPY, "0")
+                        setCompass(northPX, northPY, "0")
 
-                    # radians based on where true north is
-                    r = radians(360 - currentDirection)
-                    radius = 38
+                        # radians based on where true north is
+                        r = radians(360 - currentDirection)
+                        radius = 38
 
-                    # show south
-                    southPX = round(75 - radius * sin(r))
-                    southPY = round(60 + radius * cos(r))
-                    setCompass(southPX, southPY, "255")
+                        # show south
+                        southPX = round(75 - radius * sin(r))
+                        southPY = round(60 + radius * cos(r))
+                        setCompass(southPX, southPY, "255")
 
-                    # show north
-                    northPX = round(75 + radius * sin(r))
-                    northPY = round(60 - radius * cos(r))
-                    setCompass(northPX,northPY, "224")
-                    currentDirectionPrevious = currentDirection
-        else:
+                        # show north
+                        northPX = round(75 + radius * sin(r))
+                        northPY = round(60 - radius * cos(r))
+                        setCompass(northPX,northPY, "224")
+                        currentDirectionPrevious = currentDirection
+            else:
+                updateDirection("    ")
+        except (Exception):
             updateDirection("    ")
         
     secondsPassed = secondsPassed + 1
