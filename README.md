@@ -185,7 +185,7 @@ Run the following commands:
 
 For testing force your USB device to connect to gpsd
 
-`sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock`
+`sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
 
 `sudo systemctl stop gpsd.socket`
 
@@ -198,7 +198,7 @@ For testing force your USB device to connect to gpsd
 > \# Default settings for gpsd.
 > START_DAEMON="true"
 > GPSD_OPTIONS="-n"
-> DEVICES="/dev/ttyAMA0"
+> DEVICES="/dev/ttyS0"
 > USBAUTO="false"
 > GPSD_SOCKET="/var/run/gpsd.sock"
 
@@ -318,7 +318,7 @@ Run the following queries:
 
 \# m h  dom mon dow   command
 @reboot /bin/sleep 5; killall gpsd
-@reboot /bin/sleep 10; /usr/sbin/gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock
+@reboot /bin/sleep 10; /usr/sbin/gpsd /dev/ttyS0 -F /var/run/gpsd.sock
 
 ### Create the logs folder for the data to be saved
 `mkdir /home/pi/TripComputer/computer/logs`

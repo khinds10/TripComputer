@@ -14,7 +14,6 @@ pin = 18
 # start logging temp
 data.removeJSONFile('temp.data')
 while True:
-
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
     if humidity is not None and temperature is not None:
 

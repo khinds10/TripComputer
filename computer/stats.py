@@ -15,7 +15,6 @@ data.removeJSONFile('stats.data')
 
 while True:
     try:
-
 	    drivingStatistics = Statistics.Statistics()
 	    drivingTimes = postgres.getDrivingTimes(thisTripStartID)
 	    avgSpeeds = postgres.getAverageSpeeds(thisTripStartID)

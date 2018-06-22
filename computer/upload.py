@@ -14,7 +14,7 @@ while True:
         currentSyncInfo = json.loads(subprocess.check_output(['curl', settings.devicesServer + '/upload.php?action=sync&device=trip-computer' ]))
 
         # get the rows as a list of lists with the datetime converted to MYSQL friendly string
-	postData = postgres.getResultsToUpload(currentSyncInfo['time'])
+        postData = postgres.getResultsToUpload(currentSyncInfo['time'])
         insertRows = []
         for item in postData:
             insertRows.append([item[0].strftime('%Y-%m-%d %H:%M:%S'), item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9]])
