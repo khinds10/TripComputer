@@ -22,7 +22,7 @@ while True:
 	    drivingStatistics.inTrafficTimes = map(data.convertHumanReadable, postgres.getInTrafficTimes(thisTripStartID))
 	    drivingStatistics.averageSpeeds = map(data.convertToString, map(data.convertToInt, avgSpeeds))
 	    drivingStatistics.averageAltitude = map(data.convertToString, map(data.convertToInt, postgres.getAverageAlt(thisTripStartID)))
-	    drivingStatistics.milesTravelled = [data.convertToInt(avgSpeeds[0]/60/60 * drivingTimes[0])]
+	    drivingStatistics.milesTravelled = [data.convertToInt(avgSpeeds[0]/60/60 * drivingTimes[0]), data.convertToInt(avgSpeeds[1]/60/60 * drivingTimes[1])]
             
 	    # create or rewrite data to stats data file as JSON, then wait 1 minute
 	    data.saveJSONObjToFile('stats.data', drivingStatistics)
