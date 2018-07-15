@@ -14,13 +14,13 @@ import info.LocaleDetails as LocaleDetails
 # save full datasets to DB each second
 while True:
     try:
-        locationInfo = data.getJSONFromDataFile('location.data')
+        locationInfo = data.getJSONFromDataFile('gps.data')
         print locationInfo
         if locationInfo == "":
             locationInfo = GPSInfo.GPSInfo()
             locationInfo = json.loads(locationInfo.to_JSON())
         
-        localeInfo = data.getJSONFromDataFile('locale.data')
+        localeInfo = data.getJSONFromDataFile('address.data')
         print localeInfo
         if localeInfo == "":
             localeInfo = LocaleDetails.LocaleDetails()
