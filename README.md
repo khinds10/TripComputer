@@ -1,5 +1,11 @@
 # TripComputer - GPS Trip Computer & Weather Module for your vehicle
 
+![Completed](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/complete.jpg "Completed")
+
+![Compass](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/compass.jpg "Compass")
+
+![Driving Statistics](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/stats.jpg "Driving Statistics")
+
 #### Flashing RaspberriPi Hard Disk / Install Required Software (Using Ubuntu Linux)
 
 Download "RASPBIAN JESSIE LITE VERSION"
@@ -118,7 +124,6 @@ Add the following lines to have your raspberrypi automatically connect to your h
 >
 >_syntax on_
 
-
 ### Supplied needed
 
 2" 320x240 TFT LCD Digole Display (x2)
@@ -137,35 +142,44 @@ Adafruit GPS Breakout
 
 ![Adafruit GPS Breakout](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/GPS.png "Adafruit GPS Breakout")
 
-52mm 2Inch 60-0-60 AMP Ammeter Motor Auto Car Gauge Meter Voltmeter Gauge 12V
+52mm 2in Gauges - used for the glass / and screen surrounds
+
+![52mm 2in Gauges](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/52mm-2Inch.png "52mm 2in Gauges")
+
+2 Gauge mount container
+
+![gauge container](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/gauge-case.jpg "gauge container")
 
 ### Print the Enclosure
 
-> INSTRUCTIONS HERE
+In the "3DPrint/" folder of this project, print the gauges-final.stl file which will produce the Digole display surrounds needed to mount the 2 screens inside the gauge mount container.
 
-### Building the TripComputer
-
-This is the wiring for the unit
+### Building the Trip Computer
 
 ![Schematic](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/schematic.png "Schematic")
 
-#### Connect the following Devices the pins on the  Pi Zero
+#### Connect the following Devices the pins on the Pi Zero
 
 Digole (each):         3v / GND / SDA / SCL
 
 DHT11:          5v / GPIO 16 (36) / GND
 
-### Connect the USB Module to RPi HW UART
+### Connect the GPS USB Module to RaspberriPi via HW UART connections
 
 Using HW UART for the GPS module requires the following to free the UART connection up on your Pi.
 
 "Cross"-Connect the TX and RX pins from the GPS module to the RPi TX (GPIO 14/8 pin) and RX (GPIO 15/10 pin) -- [TX goes to RX on the device and vice versa.]
 Connect RPi 5V to the VIN pin and the GPS module GND pin to an available RPi GND pin.
 
-
 ### Final Assembly
 
-> INSTRUCTIONS HERE
+![XXX](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/Assemble.png "XXX")
+
+![XXX](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/displays.png "XXX")
+
+![XXX](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/wiring.png "XXX")
+
+![XXX](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/wood-bottom.jpg "XXX")
 
 
 #### Configure your Pi to use the GPS Modeul on UART
@@ -310,7 +324,6 @@ Run the following queries:
 >);
 >CREATE UNIQUE INDEX time_idx ON driving\_stats (time);
 
-
 ### Hack required to get GPSD working with UART connection on reboot
 
 `sudo su`
@@ -331,20 +344,28 @@ Add the following lines
 
 `@reboot /bin/sleep 15; nohup python /home/pi/TripComputer/XXX.py > /home/pi/TripComputer/XXX.log 2>&1`
 
+### Finally create the local settings needed to run the trip computer
 
-### Finished and powered on!
+Find the file `/computer/includes/settings.shadow.py`
 
-> INSTRUCTIONS HERE
+Create your own version of the settings file named simply `settings.py`
 
-### Mounting inside your vehicle
+##### forecast.io API key for local weather information
+weatherAPIURL = 'https://api.forecast.io/forecast/'
+weatherAPIKey = 'API KEY HERE'
 
-> INSTRUCTIONS HERE
+##### if you have the device hub project running (https://github.com/khinds10/DeviceHub)
+devicesServer = 'http://my.server.com'
+
+##### if you have the dashboard phone project running (https://github.com/khinds10/RetroDashboard)
+dashboardServer = 'http://my.server.com'
 
 #### Mount on Dash
 
-> INSTRUCTIONS HERE
+![Completed](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/complete.jpg "Completed")
 
 #### Mount Humidistat away from direct Sun
 ![Humidistat Mount](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/Humidistat-Mount.jpg "Humidistat Mount")
 
 ### Reboot your RPi and you should be ready to go!
+![Complete](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/complete2.jpg "Complete")
