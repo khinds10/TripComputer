@@ -1,0 +1,22 @@
+{
+    "averageAltitude": [
+        "150", 
+        "7"
+    ], 
+    "averageSpeeds": [
+        "0", 
+        "0"
+    ], 
+    "drivingTimes": [
+        "4m", 
+        "2h16m"
+    ], 
+    "inTrafficTimes": [
+        "3m", 
+        "2h15m"
+    ], 
+    "milesTravelled": [
+        0, 
+        0
+    ]
+}

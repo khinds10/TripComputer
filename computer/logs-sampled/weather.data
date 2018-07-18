@@ -1,0 +1,16 @@
+{
+    "apparentTemperature": 70.42, 
+    "humidity": 0.72, 
+    "icon": "partly-cloudy-night", 
+    "isPrecip": false, 
+    "minute": 61, 
+    "nextHour": "Possible drizzle starting in 60 min.", 
+    "precipIntensity": 0.0, 
+    "precipProbability": 0.0, 
+    "precipStarting": false, 
+    "precipStopping": false, 
+    "solidPrecip": false, 
+    "summary": "Mostly Cloudy", 
+    "time": 1531614695, 
+    "windSpeed": 3.64
+}

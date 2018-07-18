@@ -137,6 +137,7 @@ Adafruit GPS Breakout
 
 ![Adafruit GPS Breakout](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/GPS.png "Adafruit GPS Breakout")
 
+52mm 2Inch 60-0-60 AMP Ammeter Motor Auto Car Gauge Meter Voltmeter Gauge 12V
 
 ### Print the Enclosure
 
