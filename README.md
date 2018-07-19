@@ -173,16 +173,24 @@ Connect RPi 5V to the VIN pin and the GPS module GND pin to an available RPi GND
 
 ### Final Assembly
 
-![XXX](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/Assemble.png "XXX")
+Cut a piece of wood for the bottom to hold the compenents inside the gauge casing
 
-![XXX](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/displays.png "XXX")
+![Wood Mount](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/wood-bottom.jpg "Wood Mount")
 
-![XXX](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/wiring.png "XXX")
+Take the 2 52mm 2in Gauges and cut the tops off, we're just using the glass and surround to mount our own displays the Digole displays.
+Glue them into place with hot glue.
 
-![XXX](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/wood-bottom.jpg "XXX")
+![Mount Displays](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/displays.png "Mount Displays")
 
+Using the schematic above wire together the components using solder to make everything strong and permanent
 
-#### Configure your Pi to use the GPS Modeul on UART
+![Wiring](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/wiring.png "Wiring")
+
+Mount the components inside the dual gauge casing, use the 3D printed surrounds to have the square shaped Digole displays fit to the circular gauge windows.
+
+![Mount Wiring](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/Assemble.png "Mount Wiring")
+
+#### Configure your Pi to use the GPS Module on UART
 
 sudo vi /boot/cmdline.txt
 change:
@@ -340,9 +348,28 @@ Run the following queries:
 ### Setup the scripts to run at boot
 `crontab -e`
 
-Add the following lines 
+Add the following lines
 
-`@reboot /bin/sleep 15; nohup python /home/pi/TripComputer/XXX.py > /home/pi/TripComputer/XXX.log 2>&1`
+`@reboot /bin/sleep 15; nohup python /home/pi/TripComputer/computer/mtk3339.py > /home/pi/TripComputer/computer/mtk3339.log 2>&1`
+`@reboot /bin/sleep 18; nohup python /home/pi/TripComputer/computer/driving.py > /home/pi/TripComputer/computer/driving.log 2>&1`
+`@reboot /bin/sleep 19; nohup python /home/pi/TripComputer/computer/address.py > /home/pi/TripComputer/computer/address.log 2>&1`
+`@reboot /bin/sleep 30; nohup python /home/pi/TripComputer/computer/gauges.py > /home/pi/TripComputer/computer/gauges.log 2>&1`
+`@reboot /bin/sleep 21; nohup python /home/pi/TripComputer/computer/locale.py > /home/pi/TripComputer/computer/locale.log 2>&1`
+`@reboot /bin/sleep 22; nohup python /home/pi/TripComputer/computer/notification.py > /home/pi/TripComputer/computer/notification.log 2>&1`
+`@reboot /bin/sleep 24; nohup python /home/pi/TripComputer/computer/temperature.py > /home/pi/TripComputer/computer/temperature.log 2>&1`
+`@reboot /bin/sleep 25; nohup python /home/pi/TripComputer/computer/upload.py > /home/pi/TripComputer/computer/upload.log 2>&1`
+`@reboot /bin/sleep 26; nohup python /home/pi/TripComputer/computer/weather.py > /home/pi/TripComputer/computer/weather.log 2>&1`
+`@reboot /bin/sleep 30; nohup python /home/pi/TripComputer/computer/stats.py > /home/pi/TripComputer/computer/stats.log 2>&1`
+
+Setup the root user crontab to make sure the GPS module connects correctly
+`sudo su`
+`crontab -e`
+
+Add the following lines
+
+`@reboot /bin/sleep 5; systemctl stop gpsd.socket`
+`@reboot /bin/sleep 8; killall gpsd`
+`@reboot /bin/sleep 12; /usr/sbin/gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
 
 ### Finally create the local settings needed to run the trip computer
 
