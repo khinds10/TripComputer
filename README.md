@@ -173,16 +173,16 @@ Connect RPi 5V to the VIN pin and the GPS module GND pin to an available RPi GND
 
 ### Final Assembly
 
-Cut a piece of wood for the bottom to hold the compenents inside the gauge casing
+Cut a piece of wood for the bottom to hold the compenents inside the gauge casing.
 
 ![Wood Mount](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/wood-bottom.jpg "Wood Mount")
 
-Take the 2 52mm 2in Gauges and cut the tops off, we're just using the glass and surround to mount our own displays the Digole displays.
+Take the 2 52mm 2in Gauges and cut the tops off, we're just using the glass and surround to mount our own displays, the Digole displays.
 Glue them into place with hot glue.
 
 ![Mount Displays](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/displays.png "Mount Displays")
 
-Using the schematic above wire together the components using solder to make everything strong and permanent
+Using the schematic above wire together the components using solder to make everything strong and permanent.
 
 ![Wiring](https://raw.githubusercontent.com/khinds10/TripComputer/master/construction/wiring.png "Wiring")
 
@@ -350,16 +350,26 @@ Run the following queries:
 
 Add the following lines
 
-`@reboot /bin/sleep 15; nohup python /home/pi/TripComputer/computer/mtk3339.py > /home/pi/TripComputer/computer/mtk3339.log 2>&1`
-`@reboot /bin/sleep 18; nohup python /home/pi/TripComputer/computer/driving.py > /home/pi/TripComputer/computer/driving.log 2>&1`
-`@reboot /bin/sleep 19; nohup python /home/pi/TripComputer/computer/address.py > /home/pi/TripComputer/computer/address.log 2>&1`
-`@reboot /bin/sleep 30; nohup python /home/pi/TripComputer/computer/gauges.py > /home/pi/TripComputer/computer/gauges.log 2>&1`
-`@reboot /bin/sleep 21; nohup python /home/pi/TripComputer/computer/locale.py > /home/pi/TripComputer/computer/locale.log 2>&1`
-`@reboot /bin/sleep 22; nohup python /home/pi/TripComputer/computer/notification.py > /home/pi/TripComputer/computer/notification.log 2>&1`
-`@reboot /bin/sleep 24; nohup python /home/pi/TripComputer/computer/temperature.py > /home/pi/TripComputer/computer/temperature.log 2>&1`
-`@reboot /bin/sleep 25; nohup python /home/pi/TripComputer/computer/upload.py > /home/pi/TripComputer/computer/upload.log 2>&1`
-`@reboot /bin/sleep 26; nohup python /home/pi/TripComputer/computer/weather.py > /home/pi/TripComputer/computer/weather.log 2>&1`
-`@reboot /bin/sleep 30; nohup python /home/pi/TripComputer/computer/stats.py > /home/pi/TripComputer/computer/stats.log 2>&1`
+>`@reboot /bin/sleep 15; nohup python /home/pi/TripComputer/computer/mtk3339.py > /home/pi/TripComputer/computer/mtk3339.log 2>&1`
+>
+>`@reboot /bin/sleep 18; nohup python /home/pi/TripComputer/computer/driving.py > /home/pi/TripComputer/computer/driving.log 2>&1`
+>
+>`@reboot /bin/sleep 19; nohup python /home/pi/TripComputer/computer/address.py > /home/pi/TripComputer/computer/address.log 2>&1`
+>
+>`@reboot /bin/sleep 30; nohup python /home/pi/TripComputer/computer/gauges.py > /home/pi/TripComputer/computer/gauges.log 2>&1`
+>
+>`@reboot /bin/sleep 21; nohup python /home/pi/TripComputer/computer/locale.py > /home/pi/TripComputer/computer/locale.log 2>&1`
+>
+>`@reboot /bin/sleep 22; nohup python /home/pi/TripComputer/computer/notification.py > /home/pi/TripComputer/computer/notification.log 2>&1`
+>
+>`@reboot /bin/sleep 24; nohup python /home/pi/TripComputer/computer/temperature.py > /home/pi/TripComputer/computer/temperature.log 2>&1`
+>
+>`@reboot /bin/sleep 25; nohup python /home/pi/TripComputer/computer/upload.py > /home/pi/TripComputer/computer/upload.log 2>&1`
+>
+>`@reboot /bin/sleep 26; nohup python /home/pi/TripComputer/computer/weather.py > /home/pi/TripComputer/computer/weather.log 2>&1`
+>
+>`@reboot /bin/sleep 30; nohup python /home/pi/TripComputer/computer/stats.py > /home/pi/TripComputer/computer/stats.log 2>&1`
+>
 
 Setup the root user crontab to make sure the GPS module connects correctly
 `sudo su`
@@ -367,9 +377,9 @@ Setup the root user crontab to make sure the GPS module connects correctly
 
 Add the following lines
 
-`@reboot /bin/sleep 5; systemctl stop gpsd.socket`
-`@reboot /bin/sleep 8; killall gpsd`
-`@reboot /bin/sleep 12; /usr/sbin/gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
+>`@reboot /bin/sleep 5; systemctl stop gpsd.socket`
+>`@reboot /bin/sleep 8; killall gpsd`
+>`@reboot /bin/sleep 12; /usr/sbin/gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
 
 ### Finally create the local settings needed to run the trip computer
 
@@ -378,14 +388,18 @@ Find the file `/computer/includes/settings.shadow.py`
 Create your own version of the settings file named simply `settings.py`
 
 ##### forecast.io API key for local weather information
-weatherAPIURL = 'https://api.forecast.io/forecast/'
-weatherAPIKey = 'API KEY HERE'
+
+`weatherAPIURL = 'https://api.forecast.io/forecast/'`
+
+`weatherAPIKey = 'API KEY HERE'`
 
 ##### if you have the device hub project running (https://github.com/khinds10/DeviceHub)
-devicesServer = 'http://my.server.com'
+
+`devicesServer = 'http://my.server.com'`
 
 ##### if you have the dashboard phone project running (https://github.com/khinds10/RetroDashboard)
-dashboardServer = 'http://my.server.com'
+
+`dashboardServer = 'http://my.server.com'`
 
 #### Mount on Dash
 
