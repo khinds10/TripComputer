@@ -193,15 +193,23 @@ Mount the components inside the dual gauge casing, use the 3D printed surrounds 
 #### Configure your Pi to use the GPS Module on UART
 
 sudo vi /boot/cmdline.txt
+
 change:
+
 `dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait`
+
 to:
+
 `dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait`
+
 (eg, remove console=ttyAMA0,115200 and if there, kgdboc=ttyAMA0,115200)
 
 Note you might see console=serial0,115200 or console=ttyS0,115200 and should remove those parts of the line if present.
+
 Run the following commands:
+
 `sudo systemctl stop serial-getty@ttyAMA0.service`
+
 `sudo systemctl disable serial-getty@ttyAMA0.service`
 
 #### GPS Module Install
@@ -330,6 +338,7 @@ Run the following queries:
 > weather\_precipProbability real,
 > weather\_windSpeed real
 >);
+>
 >CREATE UNIQUE INDEX time_idx ON driving\_stats (time);
 
 ### Hack required to get GPSD working with UART connection on reboot
@@ -338,14 +347,16 @@ Run the following queries:
 
 `crontab -e`
 
-\# m h  dom mon dow   command
-@reboot /bin/sleep 5; killall gpsd
-@reboot /bin/sleep 10; /usr/sbin/gpsd /dev/ttyS0 -F /var/run/gpsd.sock
+`@reboot /bin/sleep 5; killall gpsd`
+
+`@reboot /bin/sleep 10; /usr/sbin/gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
 
 ### Create the logs folder for the data to be saved
+
 `mkdir /home/pi/TripComputer/computer/logs`
 
 ### Setup the scripts to run at boot
+
 `crontab -e`
 
 Add the following lines
@@ -372,13 +383,17 @@ Add the following lines
 >
 
 Setup the root user crontab to make sure the GPS module connects correctly
+
 `sudo su`
+
 `crontab -e`
 
 Add the following lines
 
 >`@reboot /bin/sleep 5; systemctl stop gpsd.socket`
+>
 >`@reboot /bin/sleep 8; killall gpsd`
+>
 >`@reboot /bin/sleep 12; /usr/sbin/gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
 
 ### Finally create the local settings needed to run the trip computer
